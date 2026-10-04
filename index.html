@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web NFC Token Router (demo)</title>
+  <style>
+    body{font-family:system-ui,sans-serif;max-width:560px;margin:2rem auto;padding:0 1rem;color:#1e293b}
+    button{padding:.7rem 1.2rem;border-radius:8px;border:0;background:#2563eb;color:#fff;font-weight:600;cursor:pointer;margin:.25rem .25rem .25rem 0}
+    input{width:100%;padding:.6rem;border:1px solid #cbd5e1;border-radius:6px;box-sizing:border-box;margin:.4rem 0}
+    pre{background:#f1f5f9;padding:1rem;border-radius:8px;overflow:auto} .warn{background:#fef3c7;padding:.7rem 1rem;border-radius:8px}
+  </style>
+</head>
+<body>
+  <h1>Web NFC Token Router</h1>
+  <p id="support" class="warn"></p>
+  <h2>Read a card</h2>
+  <button id="scanBtn" type="button">Start scanning</button><button id="stopBtn" type="button">Stop</button>
+  <h2>Write a link to a card</h2>
+  <label for="urlIn">https:// link</label>
+  <input id="urlIn" placeholder="https://example.com/my-profile" />
+  <button id="writeBtn" type="button">Write to card</button>
+  <pre id="out" aria-live="polite">Waiting...</pre>
+  <script src="nfc-core.js"></script>
+  <script src="nfc-bridge.js"></script>
+  <script>
+    const m = new NFCTokenManager(), out = document.getElementById("out");
+    document.getElementById("support").textContent = m.isSupported
+      ? "Web NFC is available. Hold a card to the back of your phone."
+      : "Web NFC is not available here. It needs Chrome on Android over https.";
+    const show = v => out.textContent = typeof v === "string" ? v : JSON.stringify(v, null, 2);
+    document.getElementById("scanBtn").onclick = () => m.startListening(show, show);
+    document.getElementById("stopBtn").onclick = () => { m.stopListening(); show("Stopped."); };
+    document.getElementById("writeBtn").onclick = async () => {
+      try { show("Hold card to phone... wrote: " + await m.writeProfileUrl(document.getElementById("urlIn").value)); }
+      catch (e) { show("Error: " + e.message); }
+    };
+  </script>
+</body>
+</html>

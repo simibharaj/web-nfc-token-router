@@ -1,0 +1,1 @@
+{ "name": "web-nfc-token-router", "version": "0.1.0", "description": "Read and write NFC cards from the browser (Web NFC), with URL safety checks.", "scripts": { "test": "node --test test/" }, "license": "MIT" }
